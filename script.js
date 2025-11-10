@@ -1,72 +1,126 @@
-// Ждем, пока вся страница (HTML) загрузится
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Находим все нужные элементы
     const clubMap = document.querySelector('.club-map');
     const modal = document.getElementById('booking-modal');
     const closeModalButton = document.querySelector('.close-button');
     const bookingForm = document.getElementById('booking-form');
     const modalPcIdSpan = document.getElementById('modal-pc-id');
 
-    let currentSelectedPc = null; // Переменная для хранения ПК, который бронируют
+    let currentSelectedPc = null;
+    let bookings = {}; // Наш объект для хранения брони
 
-    // НОВОЕ: Объект для хранения информации о бронированиях
-    // Ключ - ID компьютера, значение - объект с данными брони
-    const bookings = {}; 
+    // --- 1. НОВЫЙ БЛОК: Сохранение и Загрузка ---
 
-    // НОВАЯ ФУНКЦИЯ: Обновление тултипа для ПК
-    function updatePcTooltip(pcElement, pcId, clientName, arrivalTime) {
+    // Функция сохранения в localStorage
+    function saveBookings() {
+        localStorage.setItem('clubBookings', JSON.stringify(bookings));
+    }
+
+    // Функция загрузки и отрисовки карты
+    function loadBookingsAndRenderMap() {
+        const savedBookings = localStorage.getItem('clubBookings');
+        if (savedBookings) {
+            bookings = JSON.parse(savedBookings);
+        }
+
+        // Проходимся по всем ПК на карте
+        document.querySelectorAll('.pc').forEach(pcElement => {
+            const pcId = pcElement.dataset.pcId;
+            const booking = bookings[pcId];
+
+            // Сначала сбрасываем все статусы
+            pcElement.classList.remove('pc-busy', 'pc-occupied');
+            pcElement.classList.add('pc-available');
+            
+            // Удаляем старый тултип, если он был
+            const oldTooltip = pcElement.querySelector('.pc-tooltip');
+            if (oldTooltip) {
+                oldTooltip.remove();
+            }
+
+            if (booking) {
+                // Если есть бронь, обновляем класс и тултип
+                pcElement.classList.remove('pc-available');
+                if (booking.status === 'booked') {
+                    pcElement.classList.add('pc-busy'); // Забронирован
+                } else if (booking.status === 'occupied') {
+                    pcElement.classList.add('pc-occupied'); // Занят
+                }
+                updatePcTooltip(pcElement, pcId, booking.name, booking.time, booking.status);
+            }
+        });
+    }
+
+    // Функция обновления тултипа (теперь показывает статус)
+    function updatePcTooltip(pcElement, pcId, clientName, arrivalTime, status) {
         let tooltip = pcElement.querySelector('.pc-tooltip');
         if (!tooltip) {
             tooltip = document.createElement('div');
             tooltip.classList.add('pc-tooltip');
             pcElement.appendChild(tooltip);
         }
+        
+        let statusText = (status === 'booked') ? 'Бронь' : 'Занят';
+        
         tooltip.innerHTML = `
-            <strong>Забронировано:</strong><br>
-            Клиент: ${clientName}<br>
+            <strong>${statusText}: ${clientName}</strong><br>
             Время: ${arrivalTime}
         `;
     }
 
-    // --- 1. Открытие модального окна ---
+    // --- 2. ОБНОВЛЕННЫЙ: Обработчик кликов по карте ---
+
     clubMap.addEventListener('click', (event) => {
         const clickedPc = event.target.closest('.pc');
-
-        if (!clickedPc) {
-            return;
-        }
+        if (!clickedPc) return;
 
         const pcId = clickedPc.dataset.pcId;
+        const booking = bookings[pcId];
 
-        // Теперь проверяем не просто класс, а есть ли бронь в нашем объекте
-        if (bookings[pcId]) { 
-            // alert(`Этот компьютер №${pcId} уже забронирован клиентом ${bookings[pcId].name} на ${bookings[pcId].time}.`);
-            // Вместо alert, просто ничего не делаем, так как при наведении будет тултип
-            return; 
+        if (!booking) {
+            // --- СЛУЧАЙ 1: ПК СВОБОДЕН (ЗЕЛЕНЫЙ) ---
+            // Открываем модальное окно бронирования
+            currentSelectedPc = clickedPc;
+            modalPcIdSpan.textContent = pcId;
+            modal.classList.add('visible');
+        } 
+        else if (booking.status === 'booked') {
+            // --- СЛУЧАЙ 2: ПК ЗАБРОНИРОВАН (ФИОЛЕТОВЫЙ) ---
+            // Предлагаем посадить клиента
+            if (confirm(`Клиент "${booking.name}" (бронь на ${booking.time}) пришел?`)) {
+                // Меняем статус на "Занят"
+                booking.status = 'occupied';
+                saveBookings(); // Сохраняем
+                loadBookingsAndRenderMap(); // Перерисовываем карту
+            }
+        } 
+        else if (booking.status === 'occupied') {
+            // --- СЛУЧАЙ 3: ПК ЗАНЯТ (КРАСНЫЙ) ---
+            // Предлагаем завершить сеанс
+            if (confirm(`Завершить сеанс для клиента "${booking.name}"?`)) {
+                // Удаляем бронь
+                delete bookings[pcId];
+                saveBookings(); // Сохраняем
+                loadBookingsAndRenderMap(); // Перерисовываем карту
+            }
         }
-
-        // Если ПК свободен:
-        currentSelectedPc = clickedPc;
-        modalPcIdSpan.textContent = pcId;
-        modal.classList.add('visible');
     });
 
-    // --- 2. Закрытие модального окна ---
+    // --- 3. Закрытие модального окна (без изменений) ---
     const closeModal = () => {
         modal.classList.remove('visible');
         bookingForm.reset();
         currentSelectedPc = null;
     };
-
     closeModalButton.addEventListener('click', closeModal);
-
     modal.addEventListener('click', (event) => {
         if (event.target === modal) {
             closeModal();
         }
     });
 
-    // --- 3. Обработка отправки формы ---
+    // --- 4. ОБНОВЛЕННЫЙ: Обработка отправки формы ---
     bookingForm.addEventListener('submit', (event) => {
         event.preventDefault(); 
 
@@ -75,30 +129,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const arrivalTime = document.getElementById('arrival-time').value;
         const pcId = modalPcIdSpan.textContent;
 
-        console.log('--- НОВАЯ БРОНЬ ---');
-        console.log('Компьютер:', pcId);
-        console.log('Имя клиента:', clientName);
-        console.log('Телефон:', clientPhone);
-        console.log('Время:', arrivalTime);
-        console.log('--------------------');
-        
-        alert(`ПК №${pcId} успешно забронирован!`);
-
-        // Сохраняем информацию о бронировании в нашем объекте
+        // Сохраняем информацию о бронировании (с новым статусом)
         bookings[pcId] = {
             name: clientName,
             phone: clientPhone,
-            time: arrivalTime
+            time: arrivalTime,
+            status: 'booked' // Изначально 'забронирован'
         };
 
-        // Меняем статус ПК на "занят" и добавляем тултип
-        if (currentSelectedPc) {
-            currentSelectedPc.classList.remove('pc-available');
-            currentSelectedPc.classList.add('pc-busy');
-            updatePcTooltip(currentSelectedPc, pcId, clientName, arrivalTime); // Создаем или обновляем тултип
-        }
+        // Сохраняем в localStorage
+        saveBookings();
+        
+        alert(`ПК №${pcId} успешно забронирован!`);
 
+        // Перерисовываем всю карту с новыми данными
+        loadBookingsAndRenderMap();
+
+        // Закрываем окно
         closeModal();
     });
+
+    // --- 5. ЗАПУСК ---
+    // Загружаем брони и рисуем карту при первой загрузке страницы
+    loadBookingsAndRenderMap();
 
 });
