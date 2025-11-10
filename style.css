@@ -47,22 +47,24 @@ body {
     border-bottom-color: #f04141; /* Красная полоска (Занят) */
 }
 
-/* Выбранный ПК */
+/* Выбранный ПК (ИСПРАВЛЕНО) */
 .pc:focus, .pc:hover {
     outline: 2px solid #00e676; 
     box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+    z-index: 20; /* <-- ИСПРАВЛЕНИЕ: Поднять ПК наверх при наведении */
 }
 
+/* ИСПРАВЛЕНО */
 .pc-busy:focus, .pc-busy:hover,
 .pc-occupied:focus, .pc-occupied:hover {
     outline: 2px solid #f04141; /* Красная рамка, если занят */
     box-shadow: 0 0 15px rgba(240, 65, 65, 0.5);
-    cursor: pointer; /* Оставляем курсор, т.к. теперь по нему можно кликнуть */
+    cursor: pointer; 
+    z-index: 20; /* <-- ИСПРАВЛЕНИЕ: Поднять ПК наверх при наведении */
 }
 
 
 /* --- СТИЛИ МОДАЛЬНОГО ОКНА --- */
-/* ... (здесь стили модального окна, они без изменений) ... */
 /* Фон-затемнение */
 .modal {
     display: none; /* Скрыто по умолчанию */
@@ -159,11 +161,12 @@ body {
 }
 
 /* --- СТИЛИ ДЛЯ ТУЛТИПА (ПОДСКАЗКИ) --- */
-/* ИСПРАВЛЕНО: */
+/* (Появляется снизу) */
 .pc-tooltip {
     display: none; 
     position: absolute;
-    top: 100%; /* Появляется СНИЗУ ПК (было bottom: 100%) */
+    top: 100%; 
+
     left: 50%;
     transform: translateX(-50%); 
     background-color: #333; 
@@ -177,14 +180,14 @@ body {
     pointer-events: none; 
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
-    margin-top: 10px; /* Добавим отступ снизу */
+    margin-top: 10px; /* Отступ снизу */
 }
 
-/* Стрелочка тултипа (ИСПРАВЛЕНО) */
+/* Стрелочка тултипа */
 .pc-tooltip::after {
     content: "";
     position: absolute;
-    bottom: 100%; /* Теперь стрелка ВВЕРХУ тултипа (было top: 100%) */
+    bottom: 100%; /* Стрелка ВВЕРХУ тултипа */
     left: 50%;
     margin-left: -5px;
     border-width: 5px;
@@ -192,10 +195,10 @@ body {
     border-color: transparent transparent #333 transparent; /* Стрелка указывает вверх */
 }
 
-/* Показываем тултип (ИСПРАВЛЕНО) */
+/* Показываем тултип */
 .pc.pc-busy:hover .pc-tooltip,
 .pc.pc-occupied:hover .pc-tooltip {
     display: block; 
     opacity: 1;
-    transform: translateX(-50%) translateY(0); /* (было translateY(-10px)) */
+    transform: translateX(-50%) translateY(0);
 }
