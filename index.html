@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта Клуба</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="club-map">
+        <button class="pc pc-available" data-pc-id="21" style="grid-column: 1; grid-row: 1;">21</button>
+        <button class="pc pc-available" data-pc-id="22" style="grid-column: 2; grid-row: 1;">22</button>
+        <button class="pc pc-available" data-pc-id="23" style="grid-column: 3; grid-row: 1;">23</button>
+        <button class="pc pc-available" data-pc-id="24" style="grid-column: 4; grid-row: 1;">24</button>
+        <button class="pc pc-available" data-pc-id="25" style="grid-column: 5; grid-row: 1;">25</button>
+        
+        <button class="pc pc-available" data-pc-id="26" style="grid-column: 7; grid-row: 1;">26</button>
+        <button class="pc pc-available" data-pc-id="27" style="grid-column: 8; grid-row: 1;">27</button>
+
+        <button class="pc pc-available" data-pc-id="20" style="grid-column: 1; grid-row: 2;">20</button>
+        <button class="pc pc-available" data-pc-id="19" style="grid-column: 2; grid-row: 2;">19</button>
+        <button class="pc pc-available" data-pc-id="18" style="grid-column: 3; grid-row: 2;">18</button>
+        <button class="pc pc-available" data-pc-id="17" style="grid-column: 4; grid-row: 2;">17</button>
+        <button class="pc pc-available" data-pc-id="16" style="grid-column: 5; grid-row: 2;">16</button>
+
+        <button class="pc pc-available" data-pc-id="11" style="grid-column: 1; grid-row: 3;">11</button>
+        <button class="pc pc-available" data-pc-id="12" style="grid-column: 2; grid-row: 3;">12</button>
+        <button class="pc pc-available" data-pc-id="13" style="grid-column: 3; grid-row: 3;">13</button>
+        <button class="pc pc-available" data-pc-id="14" style="grid-column: 4; grid-row: 3;">14</button>
+        <button class="pc pc-available" data-pc-id="15" style="grid-column: 5; grid-row: 3;">15</button>
+
+        <button class="pc pc-available" data-pc-id="10" style="grid-column: 1; grid-row: 4;">10</button>
+        <button class="pc pc-available" data-pc-id="9" style="grid-column: 2; grid-row: 4;">9</button>
+        <button class="pc pc-available" data-pc-id="8" style="grid-column: 3; grid-row: 4;">8</button>
+        <button class="pc pc-available" data-pc-id="7" style="grid-column: 4; grid-row: 4;">7</button>
+        <button class="pc pc-available" data-pc-id="6" style="grid-column: 5; grid-row: 4;">6</button>
+
+        <button class="pc pc-available" data-pc-id="1" style="grid-column: 1; grid-row: 5;">1</button>
+        <button class="pc pc-available" data-pc-id="2" style="grid-column: 2; grid-row: 5;">2</button>
+        <button class="pc pc-available" data-pc-id="3" style="grid-column: 3; grid-row: 5;">3</button>
+        <button class="pc pc-available" data-pc-id="4" style="grid-column: 4; grid-row: 5;">4</button>
+        <button class="pc pc-available" data-pc-id="5" style="grid-column: 5; grid-row: 5;">5</button>
+
+        <button class="pc pc-available" data-pc-id="39" style="grid-column: 1; grid-row: 7;">39</button>
+        <button class="pc pc-available" data-pc-id="38" style="grid-column: 2; grid-row: 7;">38</button>
+        <button class="pc pc-available" data-pc-id="37" style="grid-column: 3; grid-row: 7;">37</button>
+        <button class="pc pc-available" data-pc-id="36" style="grid-column: 4; grid-row: 7;">36</button>
+        <button class="pc pc-available" data-pc-id="35" style="grid-column: 5; grid-row: 7;">35</button>
+
+        <button class="pc pc-available" data-pc-id="28" style="grid-column: 9; grid-row: 1;">28</button>
+        <button class="pc pc-available" data-pc-id="29" style="grid-column: 9; grid-row: 2;">29</button>
+        <button class="pc pc-available" data-pc-id="30" style="grid-column: 9; grid-row: 3;">30</button>
+        <button class="pc pc-available" data-pc-id="31" style="grid-column: 9; grid-row: 4;">31</button>
+        <button class="pc pc-available" data-pc-id="32" style="grid-column: 9; grid-row: 5;">32</button>
+        <button class="pc pc-available" data-pc-id="33" style="grid-column: 8; grid-row: 5;">33</button>
+        <button class="pc pc-available" data-pc-id="34" style="grid-column: 7; grid-row: 5;">34</button>
+    </div>
+
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3>Бронирование компьютера № <span id="modal-pc-id"></span></h3>
+            <p class="modal-description">Пожалуйста, введите данные клиента для бронирования.</p>
+            
+            <form id="booking-form">
+                <div class="form-group">
+                    <label for="client-name">Имя клиента:</label>
+                    <input type="text" id="client-name" placeholder="Введите имя" required>
+                </div>
+                <div class="form-group">
+                    <label for="client-phone">Номер телефона:</label>
+                    <input type="tel" id="client-phone" placeholder="+7 (___) ___-__-__" required>
+                </div>
+                <div class="form-group">
+                    <label for="arrival-time">Время прихода:</label>
+                    <input type="time" id="arrival-time" placeholder="--:--" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Забронировать</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

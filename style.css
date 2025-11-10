@@ -1,0 +1,200 @@
+body {
+    background-color: #1a1a2e; /* Темный фон, как на фото */
+    font-family: Arial, sans-serif;
+    color: white;
+    padding: 20px;
+}
+
+/* Сетка для расстановки компьютеров */
+.club-map {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(7, 1fr); /* 7 рядов */
+    grid-gap: 20px; /* Расстояние между ПК */
+    max-width: 900px;
+    margin: auto;
+}
+
+/* Стили для иконки ПК */
+.pc {
+    background-color: #3a3a5e; /* Базовый цвет */
+    border: none;
+    border-radius: 8px;
+    padding: 15px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 4px solid #1e1e3f; /* "Нижняя полоска" */
+    position: relative; /* Чтобы тултип позиционировался относительно ПК */
+}
+
+/* Состояния ПК */
+.pc-available {
+    border-bottom-color: #00e676; /* Зеленая полоска */
+}
+
+.pc-busy {
+    background-color: #4b2b6b; /* Фиолетовый */
+    border-bottom-color: #a341f0; /* Фиолетовая полоска */
+    opacity: 0.7; /* Делаем занятые менее яркими */
+}
+
+/* Выбранный ПК (как "25" на вашем фото) */
+.pc:focus, .pc:hover {
+    outline: 2px solid #00e676; /* Зеленая рамка при выборе */
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.5);
+}
+
+.pc-busy:focus, .pc-busy:hover {
+    outline: 2px solid #f04141; /* Красная рамка, если занят */
+    box-shadow: 0 0 15px rgba(240, 65, 65, 0.5);
+    cursor: not-allowed;
+}
+
+
+/* --- СТИЛИ МОДАЛЬНОГО ОКНА --- */
+
+/* Фон-затемнение */
+.modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed; /* Поверх всего */
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Полупрозрачный черный */
+    
+    /* Для центрирования */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Класс, который JS добавляет для показа окна */
+.modal.visible {
+    display: flex;
+}
+
+/* Само окно */
+.modal-content {
+    background-color: #2c2c4a;
+    padding: 30px; /* Увеличил паддинг */
+    border-radius: 12px; /* Чуть более скругленные углы */
+    width: 90%;
+    max-width: 450px; /* Сделал чуть шире */
+    position: relative;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6); /* Более выраженная тень */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Легкая рамка */
+}
+
+/* Кнопка "X" (крестик) */
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close-button:hover {
+    color: white;
+}
+
+/* Новый стиль для описания */
+.modal-description {
+    color: #b0b0d0;
+    font-size: 14px;
+    margin-top: -10px; /* Поднять ближе к заголовку */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Стили формы внутри окна */
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+.form-group input {
+    width: 100%;
+    padding: 12px 15px; /* Увеличил паддинг */
+    border: 1px solid #4a4a7a; /* Более заметная рамка */
+    background-color: #1e1e3f; /* Чуть темнее фон */
+    color: white;
+    border-radius: 8px; /* Чуть более скругленные углы */
+    box-sizing: border-box; /* Важно для padding */
+    font-size: 16px; /* Чуть больше шрифт */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.form-group input:focus {
+    border-color: #00e676; /* Зеленая рамка при фокусе */
+    box-shadow: 0 0 8px rgba(0, 230, 118, 0.3); /* Легкая тень при фокусе */
+    outline: none; /* Убрать стандартный outline */
+}
+
+/* Кнопка "Забронировать" */
+.submit-btn {
+    width: 100%;
+    padding: 15px; /* Увеличил паддинг */
+    background-color: #00e676;
+    border: none;
+    border-radius: 8px; /* Чуть более скругленные углы */
+    color: #1a1a2e; /* Более темный текст */
+    font-size: 18px; /* Увеличил шрифт */
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px; /* Больше отступ сверху */
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.submit-btn:hover {
+    background-color: #00c466;
+    transform: translateY(-2px); /* Легкое поднятие при наведении */
+}
+.submit-btn:active {
+    transform: translateY(0); /* Возврат при клике */
+}
+
+/* --- СТИЛИ ДЛЯ ТУЛТИПА (подсказки) --- */
+.pc-tooltip {
+    display: none; /* Скрыто по умолчанию */
+    position: absolute;
+    bottom: 100%; /* Появляется над ПК */
+    left: 50%;
+    transform: translateX(-50%); /* Центрируем по горизонтали */
+    background-color: #333; /* Темный фон тултипа */
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 13px;
+    white-space: nowrap; /* Не переносить текст */
+    z-index: 10; /* Поверх других элементов */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    pointer-events: none; /* Важно: чтобы тултип не перехватывал события мыши */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Стрелочка тултипа */
+.pc-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Внизу тултипа */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent; /* Цвет стрелки */
+}
+
+/* Показываем тултип при наведении на ЗАБРОНИРОВАННЫЙ ПК */
+.pc.pc-busy:hover .pc-tooltip {
+    display: block; /* Показать тултип */
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px); /* Слегка поднять */
+}
